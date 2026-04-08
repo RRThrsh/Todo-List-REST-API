@@ -1,54 +1,54 @@
 const fs = require('fs');
 const path = require('path');
-const filepath = path.join(__dirname, 'todo-data.json');
+const filePath = path.join(__dirname, 'todos.json');
 
-function readTodo(){
-    const data = fs.readFileSync(filepath, 'utf8');
-    return JSON.parse(data).push(data);
-};
+function readTodos() {
+    const data = fs.readFileSync(filePath, 'utf-8');
+    return JSON.parse(data);
+}
 
-function writeTodo(todo){
-    fs.writeFileSync(filepath, JSON.stringify(todo, null, 2));
-};
+function writeTodos(todos) {
+    fs.writeFileSync(filePath, JSON.stringify(todos, null, 2));
+}
 
 const todoController = {
-    getTodo: (req, res) => {
-        const todo = readTodo();
-        res.json(todo);
-    },
-
-    addTodo: (req, res) => {
-        const todo = readTodo();
-        const { title } = req.body;
-        if (!title) return res.status(400).json({error: "Title is require"});
-
-        const newTodo = { id: todo.lenght + 1, title, complete: false };
-        todo.push (newTodo);
-        writeTodo(todo);
-        res.status(200).json(newTodo);
-    },
-
-    UpdateTodo: (req, res) => {
-        const todo = readTodo();
-        const id = parseInt(req.params.id);
-        const todos = todo.find(t => t.id === id);
-        if (!todos) return res.status(404).json({ error: "Todo not found!" });
-
-        todos.title = req.body.title ?? todos.title;
-        todos.complete = req.body.complete ?? todos.complete;
-
-        writeTodo(todo);
+    getTodos: (req, res) => {
+        const todos = readTodos();
         res.json(todos);
     },
 
-    deleteTodo: (req, res) => {
-        let todo = readTodo();
-        const id = parseInt(req.paramse.id);
-        const index = todo.findIndex(t => t.id === id);
-        if (index === -1) return  res.status(404).json({ error: "Todo not found!" } );
+    addTodo: (req, res) => {
+        const todos = readTodos();
+        const { title } = req.body;
+        if (!title) return res.status(400).json({ error: "Title is required" });
 
-        todo.splice(index, 1);
-        writeTodo(todo);
+        const newTodo = { id: todos.length + 1, title, completed: false };
+        todos.push(newTodo);
+        writeTodos(todos);
+        res.status(201).json(newTodo);
+    },
+
+    updateTodo: (req, res) => {
+        const todos = readTodos();
+        const id = parseInt(req.params.id);
+        const todo = todos.find(t => t.id === id);
+        if (!todo) return res.status(404).json({ error: "Todo not found" });
+
+        todo.title = req.body.title ?? todo.title;
+        todo.completed = req.body.completed ?? todo.completed;
+
+        writeTodos(todos);
+        res.json(todo);
+    },
+
+    deleteTodo: (req, res) => {
+        let todos = readTodos();
+        const id = parseInt(req.params.id);
+        const index = todos.findIndex(t => t.id === id);
+        if (index === -1) return res.status(404).json({ error: "Todo not found" });
+
+        todos.splice(index, 1);
+        writeTodos(todos);
         res.status(204).send();
     }
 };
