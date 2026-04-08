@@ -1,19 +1,20 @@
 const express = require('express');
 const app = express();
-const todoController = require('./user.todo.controller');
+const todoRoutes = require('./routes/todoRoutes');
 
 app.use(express.json());
 
 app.use((req, res, next) => {
-    console.log("A visitor came to page!");
+    console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
     next();
 });
 
-app.get('/', (req, res) => res.send("Hello World!"));
-app.get('/todos', todoController.getTodos);
-app.post('/todos', todoController.addTodo);
-app.put('/todos/:id', todoController.updateTodo);
-app.delete('/todos/:id', todoController.deleteTodo);
+app.get('/', (req, res) => res.send('Hello World!'));
 
+app.use('/todos', todoRoutes);
+
+app.use((req, res) => {
+    res.status(404).json({ error: 'Route not found' });
+});
 
 app.listen(3000, () => console.log('Server running on http://localhost:3000'));
