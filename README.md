@@ -32,3 +32,14 @@ A simple RESTful API for managing a TODO list using **Node.js**, **Express**, an
 ```bash
 git clone https://github.com/RRThrsh/Todo-List-REST-API.git
 cd Todo-List-REST-API
+```
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+3. Test:
+
+```bash
+npm run dev
