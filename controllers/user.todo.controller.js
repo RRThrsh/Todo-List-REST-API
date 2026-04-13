@@ -62,12 +62,16 @@ const todoController = {
         try {
             let todos = readTodos();
             const id = parseInt(req.params.id);
-            const index = todos.findIndex(t => t.id === id);
-            if (index === -1) return res.status(404).json({ error: 'Todo not found' });
-
-            todos.splice(index, 1);
-            writeTodos(todos);
-            res.status(204).send();
+        
+            const newTodos = todos.filter(t => t.id !== id);
+        
+            if (todos.length === newTodos.length) {
+                return res.status(404).json({ error: 'Todo not found' });
+            }
+        
+            writeTodos(newTodos);
+        
+            res.status(200).json({ message: 'Todo deleted successfully' });
         } catch (err) {
             console.error(err);
             res.status(500).json({ error: 'Server error' });
